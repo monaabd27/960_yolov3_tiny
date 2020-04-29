@@ -72,6 +72,7 @@ def test(cfg,
     model.eval()
     _ = model(torch.zeros((1, 3, img_size, img_size), device=device)) if device.type != 'cpu' else None  # run once
     coco91class = coco80_to_coco91_class()
+    classes = [0, 1, 2]
     s = ('%20s' + '%10s' * 6) % ('Class', 'Images', 'Targets', 'P', 'R', 'mAP@0.5', 'F1')
     p, r, f1, mp, mr, map, mf1, t0, t1 = 0., 0., 0., 0., 0., 0., 0., 0., 0.
     loss = torch.zeros(3, device=device)
@@ -125,14 +126,15 @@ def test(cfg,
             # Append to pycocotools JSON dictionary
             if save_json:
                 # [{"image_id": 42, "category_id": 18, "bbox": [258.15, 41.29, 348.26, 243.78], "score": 0.236}, ...
-                image_id = int(Path(paths[si]).stem.split('_')[-1])
+                #image_id = int(Path(paths[si]).stem.split('_')[-1])
+                image_id = str(Path(paths[si]))
                 box = pred[:, :4].clone()  # xyxy
                 scale_coords(imgs[si].shape[1:], box, shapes[si][0], shapes[si][1])  # to original shape
                 box = xyxy2xywh(box)  # xywh
-                box[:, :2] -= box[:, 2:] / 2  # xy center to top-left corner
+                #box[:, :2] -= box[:, 2:] / 2  # xy center to top-left corner
                 for p, b in zip(pred.tolist(), box.tolist()):
                     jdict.append({'image_id': image_id,
-                                  'category_id': coco91class[int(p[5])],
+                                  'category_id': classes[int(p[5])],
                                   'bbox': [round(x, 3) for x in b],
                                   'score': round(p[4], 5)})
 
