@@ -52,7 +52,7 @@ def test(cfg,
     # Configure run
     data = parse_data_cfg(data)
     nc = 1 if single_cls else int(data['classes'])  # number of classes
-    path = data['valid']  # path to test images
+    path = data[opt.path]  # path to test images
     names = load_classes(data['names'])  # class names
     iouv = torch.linspace(0.5, 0.95, 10).to(device)  # iou vector for mAP@0.5:0.95
     iouv = iouv[0].view(1)  # comment for mAP@0.5:0.95
@@ -220,7 +220,7 @@ def test(cfg,
     if save_json and map and len(jdict):
         print('\nCOCO mAP with pycocotools...')
         imgIds = [int(Path(x).stem.split('_')[-1]) for x in dataloader.dataset.img_files]
-        with open('results.json', 'w') as file:
+        with open('results_'+opt.path+'.json', 'w') as file:
             json.dump(jdict, file)
 
         try:
@@ -261,6 +261,7 @@ if __name__ == '__main__':
     parser.add_argument('--device', default='', help='device id (i.e. 0 or 0,1) or cpu')
     parser.add_argument('--single-cls', action='store_true', help='train as single-class dataset')
     parser.add_argument('--augment', action='store_true', help='augmented inference')
+    parser.add_argument('--path',  default='valid', help='use test or valid data')
     opt = parser.parse_args()
     opt.save_json = opt.save_json or any([x in opt.data for x in ['coco.data', 'coco2014.data', 'coco2017.data']])
     print(opt)
