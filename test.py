@@ -132,11 +132,33 @@ def test(cfg,
                 scale_coords(imgs[si].shape[1:], box, shapes[si][0], shapes[si][1])  # to original shape
                 box = xyxy2xywh(box)  # xywh
                 #box[:, :2] -= box[:, 2:] / 2  # xy center to top-left corner
+                temp = dict()
                 for p, b in zip(pred.tolist(), box.tolist()):
-                    jdict.append({'image_id': image_id,
-                                  'category_id': classes[int(p[5])],
-                                  'bbox': [round(x, 3) for x in b],
-                                  'score': round(p[4], 5)})
+                    if image_id not in temp:
+                        jdict.append({'image_id': image_id,
+                                    'category_id': classes[int(p[5])],
+                                    'bbox': [round(x, 3) for x in b],
+                                    'score': round(p[4], 5)})
+                        temp[image_id] = {'image_id': image_id,
+                                    'category_id': classes[int(p[5])],
+                                    'bbox': [round(x, 3) for x in b],
+                                    'score': round(p[4], 5)}
+                    else:
+                        if temp[image_id]['score'] < round(p[4], 5):
+                            #code to remove old json entry
+                            jdict.remove(temp[image_id])
+                            #code to add in new entry
+                            jdict.append({'image_id': image_id,
+                                    'category_id': classes[int(p[5])],
+                                    'bbox': [round(x, 3) for x in b],
+                                    'score': round(p[4], 5)})
+                            temp[image_id] = {'image_id': image_id,
+                                    'category_id': classes[int(p[5])],
+                                    'bbox': [round(x, 3) for x in b],
+                                    'score': round(p[4], 5)}
+                            
+
+
 
             # Assign all predictions as incorrect
             correct = torch.zeros(pred.shape[0], niou, dtype=torch.bool, device=device)
