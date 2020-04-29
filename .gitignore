@@ -1,14 +1,8 @@
 # Repo-specific GitIgnore ----------------------------------------------------------------------------------------------
-*.jpg
-*.jpeg
-*.png
 *.bmp
 *.tif
 *.tiff
 *.heic
-*.JPG
-*.JPEG
-*.PNG
 *.BMP
 *.TIF
 *.TIFF
@@ -17,10 +11,7 @@
 *.mov
 *.MOV
 *.avi
-*.data
-*.json
 
-*.cfg
 !cfg/yolov3*.cfg
 
 storage.googleapis.com
@@ -46,8 +37,6 @@ gcp_test*.sh
 !targets*.mat
 
 # Neural Network weights -----------------------------------------------------------------------------------------------
-*.weights
-*.pt
 *.onnx
 *.mlmodel
 darknet53.conv.74
