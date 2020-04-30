@@ -1,0 +1,4 @@
+classes= 3
+train=data/pretrain/train.txt
+valid=data/pretrain/valid.txt
+names=data/pretrain/classes.names

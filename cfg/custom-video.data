@@ -1,0 +1,4 @@
+classes= 3
+train=data/videos/train.txt
+valid=data/videos/valid.txt
+names=data/videos/classes.names
