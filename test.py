@@ -77,11 +77,21 @@ def test(cfg,
     p, r, f1, mp, mr, map, mf1, t0, t1 = 0., 0., 0., 0., 0., 0., 0., 0., 0.
     loss = torch.zeros(3, device=device)
     jdict, stats, ap, ap_class = [], [], [], []
+    all_images = dict()
     for batch_i, (imgs, targets, paths, shapes) in enumerate(tqdm(dataloader, desc=s)):
         imgs = imgs.to(device).float() / 255.0  # uint8 to float32, 0 - 255 to 0.0 - 1.0
         targets = targets.to(device)
         nb, _, height, width = imgs.shape  # batch size, channels, height, width
         whwh = torch.Tensor([width, height, width, height]).to(device)
+        for path in paths:
+            jdict.append({'image_id': str(path),
+                                    'category_id': None,
+                                    'bbox': None,
+                                    'score': None})
+            all_images[str(path)] = {'image_id': str(path),
+                                    'category_id': None,
+                                    'bbox': None,
+                                    'score': None}
 
         # Plot images with bounding boxes
         f = 'test_batch%g.png' % batch_i  # filename
@@ -135,10 +145,12 @@ def test(cfg,
                 temp = dict()
                 for p, b in zip(pred.tolist(), box.tolist()):
                     if image_id not in temp:
+                        jdict.remove(all_images[image_id])
                         jdict.append({'image_id': image_id,
                                     'category_id': classes[int(p[5])],
                                     'bbox': [round(x, 3) for x in b],
                                     'score': round(p[4], 5)})
+                        
                         temp[image_id] = {'image_id': image_id,
                                     'category_id': classes[int(p[5])],
                                     'bbox': [round(x, 3) for x in b],
@@ -156,6 +168,7 @@ def test(cfg,
                                     'category_id': classes[int(p[5])],
                                     'bbox': [round(x, 3) for x in b],
                                     'score': round(p[4], 5)}
+
                             
 
 
